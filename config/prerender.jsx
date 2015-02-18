@@ -1,25 +1,11 @@
 var async = require("async");
 var React = require("react");
 var Router = require("react-router");
-var ItemsStore = require("items-store/ItemsStore");
 var routes = require("../app/" + __resourceQuery.substr(1) + "Routes");
-var storesDescriptions = require("../app/" + __resourceQuery.substr(1) + "StoresDescriptions");
 var html = require("../app/prerender.html");
 
-// create stores for prerending
-// readItems contains async methods for fetching the data from database
-function createStoresPrerender(readItems) {
-	return Object.keys(storesDescriptions).reduce(function(obj, name) {
-		obj[name] = new ItemsStore(Object.assign({
-			readSingleItem: readItems[name],
-			queueRequest: function(fn) { fn(); }
-		}, storesDescriptions[name]));
-		return obj;
-	}, {});
-}
 
 module.exports = function(path, readItems, scriptUrl, styleUrl, commonsUrl, callback) {
-	var stores = createStoresPrerender(readItems);
 
 	// run the path thought react-router
 	Router.run(routes, path, function(Application, state) {
